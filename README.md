@@ -1,95 +1,123 @@
-# claude-aeon-skill
+# Aeon Time Series Machine Learning Skill
 
-A Claude Code skill for time-series machine learning with the Aeon toolkit.
+A Claude Code skill for building, evaluating, and improving time-series machine learning workflows with [Aeon](https://www.aeon-toolkit.org/). It covers classification, regression, clustering, forecasting, anomaly detection, segmentation, similarity search, feature extraction, and temporal distance measures.
 
-## Overview
+## What This Skill Covers
 
-Aeon is a Python toolkit for machine learning with temporal and sequential data. It provides specialized estimators and workflows for tasks that are not always handled well by general-purpose tabular machine learning methods.
+| Problem type | Typical objective | Main reference |
+|---|---|---|
+| Classification | Assign a label to a complete series | [Classification](references/classification.md) |
+| Regression | Predict a continuous target from temporal data | [Regression](references/regression.md) |
+| Clustering | Group similar series without labels | [Clustering](references/clustering.md) |
+| Forecasting | Predict future observations | [Forecasting](references/forecasting.md) |
+| Anomaly detection | Find unusual points, windows, or series | [Anomaly detection](references/anomaly_detection.md) |
+| Segmentation | Detect regime changes and boundaries | [Segmentation](references/segmentation.md) |
+| Similarity search | Retrieve repeated or similar subsequences | [Similarity search](references/similarity_search.md) |
+| Transformations | Normalize and transform time-series collections | [Transformations](references/transformations.md) |
+| Distance analysis | Compare sequences with temporal distance functions | [Distances](references/distances.md) |
+| Deep learning | Use neural architectures for temporal tasks | [Networks](references/networks.md) |
+| Benchmarking | Load benchmark datasets and compare estimators | [Datasets and benchmarking](references/datasets_benchmarking.md) |
 
-This skill helps select appropriate time-series methods, prepare temporal datasets, compare algorithms, and evaluate results without ignoring the ordering and structure of observations.
+## When to Use It
 
-## Supported Problem Types
+Use this skill when a task involves ordered observations, timestamps, repeated measurements, or sequential patterns and a time-series-specific method is appropriate. It can help select estimators, prepare data, extract features, design validation, compare models, and interpret results.
 
-- **Classification:** Assign labels to complete time series.
-- **Regression:** Predict continuous targets from temporal observations.
-- **Clustering:** Group series with similar patterns.
-- **Forecasting:** Estimate future observations from historical values.
-- **Anomaly detection:** Identify unusual series or subsequences.
-- **Segmentation:** Detect boundaries or changes within a sequence.
-- **Similarity search:** Retrieve series that resemble a query.
-- **Transformation:** Convert or normalize time-series representations.
-- **Feature extraction:** Generate useful representations for downstream models.
+It is not a substitute for domain knowledge or a defensible evaluation design. Result quality depends on the sampling process, target definition, data quality, split strategy, and metric selection.
 
 ## Installation
 
-```bash
+Install Aeon in the Python environment used for the project:
+
+~~~bash
 python -m pip install aeon
-```
+~~~
 
-Install the skill:
+Or, when using uv:
 
-```bash
+~~~bash
+uv pip install aeon
+~~~
+
+Clone the skill into the Claude Code skills directory:
+
+~~~bash
 git clone https://github.com/Brajesh31/claude-aeon-skill.git ~/.claude/skills/aeon
-```
+~~~
 
-## Usage
+Invoke it in Claude Code with:
 
-Use the skill when a task involves ordered observations, timestamps, repeated measurements, or temporal patterns. Provide the sampling frequency, series length, number of series, target definition, and any missing-data constraints.
-
-Invoke it directly when needed:
-
-```text
+~~~text
 /aeon
-```
+~~~
 
-## Typical Workflow
+## Workflow
 
-1. Identify whether the problem is classification, regression, forecasting, clustering, or another time-series task.
-2. Inspect series length, sampling frequency, missing values, and target leakage risks.
-3. Select a suitable dataset representation and estimator.
-4. Establish a baseline before tuning complex methods.
-5. Split data in a way that respects time and entity boundaries.
-6. Evaluate with metrics appropriate to the task.
-7. Compare results against a simple baseline.
-8. Record preprocessing, model configuration, and evaluation protocol.
+1. **Define the prediction task.** Specify the unit of analysis, target, prediction horizon, and how the result will be used.
+2. **Inspect the time axis.** Record sampling frequency, timestamps, missing intervals, series lengths, and whether observations are regular or irregular.
+3. **Inspect the collection.** Check the number of series, number of channels, scale differences, entity identifiers, and target distribution.
+4. **Choose a defensible split.** Use chronological, rolling-origin, or group-aware validation when time or entity boundaries matter.
+5. **Establish a baseline.** Start with a simple method that is difficult to beat accidentally.
+6. **Select a suitable Aeon estimator.** Match the algorithm to the task, data volume, series length, compute budget, and interpretability needs.
+7. **Fit transformations correctly.** Learn preprocessing parameters from training data only and apply the fitted transformation to validation or test data.
+8. **Evaluate the right outcome.** Report task-relevant metrics, uncertainty where possible, and performance against the baseline.
+9. **Review failure cases.** Inspect residuals, difficult series, false alerts, unstable segments, and performance across relevant groups.
+10. **Record the experiment.** Capture the data version, split, estimator, parameters, random seeds, metrics, limitations, and next action.
 
-## Evaluation Considerations
+## Important Evaluation Guidance
 
-Random train/test splitting can produce misleading results when temporal order matters. Use chronological or grouped evaluation where appropriate. For forecasting, ensure that future observations do not leak into training features. For classification and regression, consider whether samples from the same subject or device must remain in a single split.
+Time-series validation is not interchangeable with a random split. A random split can leak future information into training, or place observations from the same subject, device, or customer in both training and test sets.
+
+Choose the split based on the deployment question:
+
+- **Future prediction:** train on earlier observations and evaluate on later observations.
+- **Generalization to unseen entities:** keep entity groups separate across splits.
+- **Repeated forecasting:** use rolling-origin or expanding-window evaluation.
+- **Independent series classification:** use stratification when appropriate, while checking whether series from the same source must remain together.
+
+Fit scalers, imputers, feature selection, and other learned transformations on the training partition only. Keep a final holdout untouched until model selection is complete.
+
+## Included Resources
+
+- [Problem definition template](resources/problem-definition-template.md): capture the data shape, task, target, horizon, and constraints before choosing a model.
+- [Time-series validation checklist](resources/validation-checklist.md): review leakage risks, split strategy, preprocessing, baselines, and evaluation.
+- [Model review template](resources/model-review-template.md): document experiments, compare candidates, and record limitations and deployment considerations.
+
+## Existing Reference Guides
+
+The `references/` directory provides topic-focused guides for classification, regression, clustering, forecasting, anomaly detection, segmentation, similarity search, transformations, distances, networks, and benchmarking. Start with [SKILL.md](SKILL.md), then open the relevant reference.
 
 ## Repository Structure
 
-```text
+~~~text
 claude-aeon-skill/
 ├── SKILL.md
+├── README.md
+├── LICENSE
 ├── references/
-│   ├── anomaly-detection/
-│   ├── classification/
-│   ├── clustering/
-│   ├── datasets-and-benchmarking/
-│   ├── distances/
-│   ├── forecasting/
-│   ├── networks/
-│   ├── regression/
-│   ├── segmentation/
-│   ├── similarity-search/
-│   └── transformations/
-└── README.md
-```
+│   ├── anomaly_detection.md
+│   ├── classification.md
+│   ├── clustering.md
+│   ├── datasets_benchmarking.md
+│   ├── distances.md
+│   ├── forecasting.md
+│   ├── networks.md
+│   ├── regression.md
+│   ├── segmentation.md
+│   ├── similarity_search.md
+│   └── transformations.md
+└── resources/
+    ├── model-review-template.md
+    ├── problem-definition-template.md
+    └── validation-checklist.md
+~~~
 
-The reference directory contains focused material for individual problem families. Start with `SKILL.md`, then consult the relevant topic guide.
+## External Documentation
 
-## Model Selection Checklist
+- [Aeon documentation](https://www.aeon-toolkit.org/)
+- [Aeon GitHub repository](https://github.com/aeon-toolkit/aeon)
+- [Aeon examples](https://www.aeon-toolkit.org/en/stable/examples.html)
+- [Aeon API reference](https://www.aeon-toolkit.org/en/stable/api_reference.html)
 
-- Match the estimator to the actual task.
-- Check the expected input shape and data type.
-- Use a baseline and a defensible validation split.
-- Consider series length and dataset size.
-- Check computational cost before large searches.
-- Report uncertainty and limitations alongside metrics.
+## License
 
-## Repository Contents
-
-- `SKILL.md`: Main skill instructions.
-- `references/`: Detailed task-specific guides and method notes.
-- `README.md`: Installation and workflow overview.
+Released under the MIT License. Copyright (c) 2026 Brajesh Kumar. See the root `LICENSE` file for the complete terms.
